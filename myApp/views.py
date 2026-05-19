@@ -1,7 +1,10 @@
+from urllib import request
+
 from sklearn.metrics.pairwise import cosine_similarity
 from django.shortcuts import render
 import pandas as pd
 import joblib
+import threading
 
 data = pd.read_pickle('myApp/dataset/data.pkl')
 preprocessor = joblib.load('myApp/models/preprocessor.joblib')
@@ -24,13 +27,17 @@ kmeans = joblib.load('myApp/models/kmeans_model.joblib')
 # cosine_sim = cosine_similarity(feature_matrix, feature_matrix)
 
 def home(request):
+
+    thread = threading.Thread(target=background_task)
+    thread.start()
+
     return render(request, 'index.html')
 
 def get_recommendations(search_param, n_recommendations=6):
     # Filter data based on search parameter
     search_results = data[data['Title'].str.contains(search_param, case=False) |
-                          (data['Category'] == search_param) |
-                          (data['Sub-Category'] == search_param)]
+                        (data['Category'] == search_param) |
+                        (data['Sub-Category'] == search_param)]
 
     # If no results found, return an empty DataFrame
     if search_results.empty:
@@ -77,3 +84,14 @@ def recommend_products(request):
         return render(request, 'index.html', {'recommendations': recommendations_kmeans})
 
     return render(request, 'index.html')
+
+def background_task():
+    print("Thread is running in background")
+
+from django.http import JsonResponse
+
+def api_test(request):
+    data = {
+        'message': 'API is working successfully'
+    }
+    return JsonResponse(data)

@@ -3,41 +3,89 @@
 {% block title %} Home {% endblock %}
 
 {% block content %}
-{% load static %}  
-<div class="container">
-    <div class="custom-card">
-        <h1 class="home_h">Recommendatation System</h1>
-        <form action="{% url 'recommend' %}" method="POST" class="input_form mb-5">
+
+<div class="container mt-5">
+
+    <!-- Search Section -->
+    <div class="text-center mb-5">
+
+        <h1 class="fw-bold mb-4">
+            AI Ecommerce Recommendation System
+        </h1>
+
+        <form action="{% url 'recommend' %}" method="POST">
             {% csrf_token %}
-            <div class="row mb-4 d-flex justify-content-center">
-                <div class="col-md-8 text-center">
-                    <label for="product" class="mb-2 fw-bolder">Enter Title</label>
-                    <input type="text" class="form-control" name="product" placeholder="Enter title" id="product" required="required">
+
+            <div class="row justify-content-center">
+                <div class="col-md-8">
+
+                    <input 
+                        type="text" 
+                        class="form-control form-control-lg"
+                        name="product"
+                        placeholder="Search product..."
+                        required
+                    >
+
                 </div>
             </div>
-            <div class="mt-5 d-flex justify-content-center">
-                <button type="submit" class="btn submit_btn">Recommend</button>
-            </div>
-        </form>                           
+
+            <button type="submit" class="btn btn-primary mt-4 px-5">
+                Recommend
+            </button>
+
+        </form>
+
     </div>
+
+
+    <!-- Products -->
     {% if recommendations %}
-    <div class="row g-5 my-5">
+    <div class="row">
+
         {% for product in recommendations %}
-        <div class="col-md-4">
-            <div class="card p-4 bg-dark text-light">
+        <div class="col-md-4 mb-4">
+
+            <div class="card shadow-lg border-0 h-100 p-3">
+
                 <div class="card-body">
-                    <h5 class="card-title">{{ product.Title }}</h5>
-                    <p class="card-text">Category: {{ product.Category }}</p>
-                    <p class="card-text">Sub-Category: {{ product.Sub_Category }}</p>  <!-- Use square brackets -->
-                    <p class="card-text">Price: ${{ product.Price }}</p>
-                    <p class="card-text">Ratings: {{ product.Ratings }}</p>
-                    <p class="card-text">Total Ratings: {{ product.Total_Ratings }}</p>  <!-- Use square brackets -->
+
+                    <span class="badge bg-primary mb-3">
+                        {{ product.Category }}
+                    </span>
+
+                    <h5 class="fw-bold mb-3">
+                        {{ product.Title }}
+                    </h5>
+
+                    <p class="text-muted">
+                        {{ product.Sub_Category }}
+                    </p>
+
+                    <hr>
+
+                    <h4 class="text-success">
+                        ${{ product.Price }}
+                    </h4>
+
+                    <p>
+                        ⭐ {{ product.Ratings }}
+                    </p>
+
+                    <small class="text-muted">
+                        {{ product.Total_Ratings }} Reviews
+                    </small>
+
                 </div>
+
             </div>
+
         </div>
         {% endfor %}
+
     </div>
     {% endif %}
+
 </div>
 
 {% endblock %}
